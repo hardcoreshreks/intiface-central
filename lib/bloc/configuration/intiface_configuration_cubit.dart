@@ -610,6 +610,7 @@ class IntifaceConfigurationCubit extends Cubit<IntifaceConfigurationState> {
       repeaterRemoteAddress: repeaterRemoteAddress,
       restApiPort: appMode == AppMode.restApi ? restLocalPort : null,
       emitOutputObservations: true,
+      emitTaskEvents: false,
     );
   }
 }
