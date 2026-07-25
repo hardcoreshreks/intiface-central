@@ -40,7 +40,7 @@ class IntifaceMessage {
   IntifaceMessage();
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class EngineVersion {
   String version = "";
   factory EngineVersion.fromJson(Map<String, dynamic> json) =>
@@ -48,7 +48,7 @@ class EngineVersion {
   EngineVersion();
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class EngineLogMessageSpan {
   String? name;
   factory EngineLogMessageSpan.fromJson(Map<String, dynamic> json) =>
@@ -56,7 +56,7 @@ class EngineLogMessageSpan {
   EngineLogMessageSpan();
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class EngineLogMessageFields {
   String message = "";
   String target = "";
@@ -67,7 +67,7 @@ class EngineLogMessageFields {
   EngineLogMessageFields();
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class EngineLogMessage {
   String timestamp = "";
   String level = "";
@@ -78,7 +78,11 @@ class EngineLogMessage {
   EngineLogMessage();
 }
 
-@JsonSerializable(checked: true, disallowUnrecognizedKeys: true) //)
+@JsonSerializable(
+  checked: true,
+  createToJson: false,
+  disallowUnrecognizedKeys: true,
+)
 class EngineLog {
   @JsonKey(name: "message")
   String? rawMessage;
@@ -95,14 +99,14 @@ class EngineLog {
   EngineLog();
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class EngineStarted {
   factory EngineStarted.fromJson(Map<String, dynamic> json) =>
       _$EngineStartedFromJson(json);
   EngineStarted();
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class EngineServerCreated {
   @JsonKey(name: "service_type")
   String? serviceType;
@@ -117,7 +121,7 @@ class EngineServerCreated {
   EngineServerCreated();
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class EngineErrorDetail {
   String code = "";
   int? port;
@@ -127,7 +131,7 @@ class EngineErrorDetail {
   EngineErrorDetail();
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class EngineError {
   String error = "";
   EngineErrorDetail? detail;
@@ -136,14 +140,14 @@ class EngineError {
   EngineError();
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class EngineStopped {
   factory EngineStopped.fromJson(Map<String, dynamic> json) =>
       _$EngineStoppedFromJson(json);
   EngineStopped();
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class ClientConnected {
   @JsonKey(name: "client_name")
   String clientName = "";
@@ -152,7 +156,7 @@ class ClientConnected {
   ClientConnected();
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class ClientDisconnected {
   factory ClientDisconnected.fromJson(Map<String, dynamic> json) =>
       _$ClientDisconnectedFromJson(json);
@@ -189,7 +193,7 @@ class SerializableUserConfigDeviceIdentifier extends Equatable {
   }
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class DeviceConnected {
   final String name;
   final int index;
@@ -209,7 +213,7 @@ class DeviceConnected {
   });
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class DeviceDisconnected {
   int index = -1;
   factory DeviceDisconnected.fromJson(Map<String, dynamic> json) =>
@@ -217,7 +221,7 @@ class DeviceDisconnected {
   DeviceDisconnected();
 }
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class ClientRejected {
   String reason = "";
   factory ClientRejected.fromJson(Map<String, dynamic> json) =>
@@ -252,7 +256,7 @@ class DeviceOutputObservation {
   Map<String, dynamic> toJson() => _$DeviceOutputObservationToJson(this);
 }
 
-@JsonSerializable(fieldRename: FieldRename.pascal)
+@JsonSerializable(createToJson: false, fieldRename: FieldRename.pascal)
 class EngineMessage {
   EngineVersion? messageVersion;
   EngineLog? engineLog;
@@ -271,7 +275,10 @@ class EngineMessage {
   factory EngineMessage.fromJson(Map<String, dynamic> json) =>
       _$EngineMessageFromJson(json);
 
-  Map<String, dynamic> toJson() => _$EngineMessageToJson(this);
+  Map<String, dynamic> toJson() => {
+    if (engineProviderLog != null)
+      "EngineProviderLog": engineProviderLog!.toJson(),
+  };
 
   EngineMessage();
 }

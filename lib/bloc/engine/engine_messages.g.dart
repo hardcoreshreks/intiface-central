@@ -40,16 +40,9 @@ Map<String, dynamic> _$IntifaceMessageToJson(IntifaceMessage instance) =>
 EngineVersion _$EngineVersionFromJson(Map<String, dynamic> json) =>
     EngineVersion()..version = json['version'] as String;
 
-Map<String, dynamic> _$EngineVersionToJson(EngineVersion instance) =>
-    <String, dynamic>{'version': instance.version};
-
 EngineLogMessageSpan _$EngineLogMessageSpanFromJson(
   Map<String, dynamic> json,
 ) => EngineLogMessageSpan()..name = json['name'] as String?;
-
-Map<String, dynamic> _$EngineLogMessageSpanToJson(
-  EngineLogMessageSpan instance,
-) => <String, dynamic>{'name': instance.name};
 
 EngineLogMessageFields _$EngineLogMessageFieldsFromJson(
   Map<String, dynamic> json,
@@ -63,29 +56,12 @@ EngineLogMessageFields _$EngineLogMessageFieldsFromJson(
       ?.map((e) => EngineLogMessageSpan.fromJson(e as Map<String, dynamic>))
       .toList();
 
-Map<String, dynamic> _$EngineLogMessageFieldsToJson(
-  EngineLogMessageFields instance,
-) => <String, dynamic>{
-  'message': instance.message,
-  'target': instance.target,
-  'span': instance.span,
-  'spans': instance.spans,
-};
-
 EngineLogMessage _$EngineLogMessageFromJson(Map<String, dynamic> json) =>
     EngineLogMessage()
       ..timestamp = json['timestamp'] as String
       ..level = json['level'] as String
       ..fields = json['fields'] as Map<String, dynamic>
       ..target = json['target'] as String;
-
-Map<String, dynamic> _$EngineLogMessageToJson(EngineLogMessage instance) =>
-    <String, dynamic>{
-      'timestamp': instance.timestamp,
-      'level': instance.level,
-      'fields': instance.fields,
-      'target': instance.target,
-    };
 
 EngineLog _$EngineLogFromJson(Map<String, dynamic> json) =>
     $checkedCreate('EngineLog', json, ($checkedConvert) {
@@ -95,15 +71,8 @@ EngineLog _$EngineLogFromJson(Map<String, dynamic> json) =>
       return val;
     }, fieldKeyMap: const {'rawMessage': 'message'});
 
-Map<String, dynamic> _$EngineLogToJson(EngineLog instance) => <String, dynamic>{
-  'message': instance.rawMessage,
-};
-
 EngineStarted _$EngineStartedFromJson(Map<String, dynamic> json) =>
     EngineStarted();
-
-Map<String, dynamic> _$EngineStartedToJson(EngineStarted instance) =>
-    <String, dynamic>{};
 
 EngineServerCreated _$EngineServerCreatedFromJson(Map<String, dynamic> json) =>
     EngineServerCreated()
@@ -114,27 +83,11 @@ EngineServerCreated _$EngineServerCreatedFromJson(Map<String, dynamic> json) =>
           ?.map((e) => e as String)
           .toList();
 
-Map<String, dynamic> _$EngineServerCreatedToJson(
-  EngineServerCreated instance,
-) => <String, dynamic>{
-  'service_type': instance.serviceType,
-  'instance_name': instance.instanceName,
-  'port': instance.port,
-  'txt_records': instance.txtRecords,
-};
-
 EngineErrorDetail _$EngineErrorDetailFromJson(Map<String, dynamic> json) =>
     EngineErrorDetail()
       ..code = json['code'] as String
       ..port = (json['port'] as num?)?.toInt()
       ..address = json['address'] as String?;
-
-Map<String, dynamic> _$EngineErrorDetailToJson(EngineErrorDetail instance) =>
-    <String, dynamic>{
-      'code': instance.code,
-      'port': instance.port,
-      'address': instance.address,
-    };
 
 EngineError _$EngineErrorFromJson(Map<String, dynamic> json) => EngineError()
   ..error = json['error'] as String
@@ -142,26 +95,14 @@ EngineError _$EngineErrorFromJson(Map<String, dynamic> json) => EngineError()
       ? null
       : EngineErrorDetail.fromJson(json['detail'] as Map<String, dynamic>);
 
-Map<String, dynamic> _$EngineErrorToJson(EngineError instance) =>
-    <String, dynamic>{'error': instance.error, 'detail': instance.detail};
-
 EngineStopped _$EngineStoppedFromJson(Map<String, dynamic> json) =>
     EngineStopped();
-
-Map<String, dynamic> _$EngineStoppedToJson(EngineStopped instance) =>
-    <String, dynamic>{};
 
 ClientConnected _$ClientConnectedFromJson(Map<String, dynamic> json) =>
     ClientConnected()..clientName = json['client_name'] as String;
 
-Map<String, dynamic> _$ClientConnectedToJson(ClientConnected instance) =>
-    <String, dynamic>{'client_name': instance.clientName};
-
 ClientDisconnected _$ClientDisconnectedFromJson(Map<String, dynamic> json) =>
     ClientDisconnected();
-
-Map<String, dynamic> _$ClientDisconnectedToJson(ClientDisconnected instance) =>
-    <String, dynamic>{};
 
 SerializableUserConfigDeviceIdentifier
 _$SerializableUserConfigDeviceIdentifierFromJson(Map<String, dynamic> json) =>
@@ -190,26 +131,11 @@ DeviceConnected _$DeviceConnectedFromJson(Map<String, dynamic> json) =>
       needsKeepalive: json['needs_keepalive'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$DeviceConnectedToJson(DeviceConnected instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'index': instance.index,
-      'identifier': instance.identifier,
-      'display_name': instance.displayName,
-      'needs_keepalive': instance.needsKeepalive,
-    };
-
 DeviceDisconnected _$DeviceDisconnectedFromJson(Map<String, dynamic> json) =>
     DeviceDisconnected()..index = (json['index'] as num).toInt();
 
-Map<String, dynamic> _$DeviceDisconnectedToJson(DeviceDisconnected instance) =>
-    <String, dynamic>{'index': instance.index};
-
 ClientRejected _$ClientRejectedFromJson(Map<String, dynamic> json) =>
     ClientRejected()..reason = json['reason'] as String;
-
-Map<String, dynamic> _$ClientRejectedToJson(ClientRejected instance) =>
-    <String, dynamic>{'reason': instance.reason};
 
 EngineProviderLog _$EngineProviderLogFromJson(Map<String, dynamic> json) =>
     EngineProviderLog()
@@ -297,20 +223,3 @@ EngineMessage _$EngineMessageFromJson(
       : DeviceOutputObservation.fromJson(
           json['DeviceOutputObservation'] as Map<String, dynamic>,
         );
-
-Map<String, dynamic> _$EngineMessageToJson(EngineMessage instance) =>
-    <String, dynamic>{
-      'MessageVersion': instance.messageVersion,
-      'EngineLog': instance.engineLog,
-      'EngineStarted': instance.engineStarted,
-      'EngineServerCreated': instance.engineServerCreated,
-      'EngineError': instance.engineError,
-      'EngineStopped': instance.engineStopped,
-      'ClientConnected': instance.clientConnected,
-      'ClientDisconnected': instance.clientDisconnected,
-      'DeviceConnected': instance.deviceConnected,
-      'DeviceDisconnected': instance.deviceDisconnected,
-      'ClientRejected': instance.clientRejected,
-      'EngineProviderLog': instance.engineProviderLog,
-      'DeviceOutputObservation': instance.deviceOutputObservation,
-    };
