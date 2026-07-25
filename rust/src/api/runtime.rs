@@ -216,6 +216,9 @@ pub fn run_engine(sink: StreamSink<String>, args: EngineOptionsExternal) -> Resu
       // Set shutdown flag to prevent any more sink messages from being sent.
       // This is critical for preventing SendError when engine completes naturally.
       ENGINE_SHUTDOWN.store(true, Ordering::SeqCst);
+      if let Some(frontend) = ENGINE_FRONTEND.read().as_ref().and_then(Weak::upgrade) {
+        frontend.close();
+      }
       RUN_STATUS.store(false, Ordering::Relaxed);
       info!("Exiting main join.");
     }
