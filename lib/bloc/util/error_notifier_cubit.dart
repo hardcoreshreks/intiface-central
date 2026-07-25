@@ -8,7 +8,7 @@ class ErrorNotifierInitialState extends ErrorNotifierState {}
 class ErrorNotifierTriggerState extends ErrorNotifierState {
   final LogRecord _record;
   ErrorNotifierTriggerState(this._record) : super();
-  get record => _record;
+  LogRecord get record => _record;
 }
 
 class ErrorNotifierClearState extends ErrorNotifierState {}

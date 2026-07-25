@@ -8,7 +8,7 @@ import 'package:github/github.dart';
 import 'package:loggy/loggy.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:version/version.dart';
-import 'package:path/path.dart' as Path;
+import 'package:path/path.dart' as path;
 
 const maxEngineVersion = 1;
 
@@ -65,7 +65,7 @@ abstract class GithubUpdater implements UpdateProvider {
               var bytes = await consolidateHttpClientResponseBytes(response);
               final dir = await getTemporaryDirectory();
               {
-                File file = File(Path.join(dir.path, asset.name!));
+                File file = File(path.join(dir.path, asset.name!));
                 await file.writeAsBytes(bytes);
                 logInfo("Updated IC Installer Path: ${file.path}");
                 if (_shouldExit) {

@@ -77,7 +77,7 @@ class AppControlPage extends StatelessWidget {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(
-                                    "App Mode: ${toBeginningOfSentenceCase(value)!}",
+                                    "App Mode: ${toBeginningOfSentenceCase(value)}",
                                   ),
                                 );
                               })
