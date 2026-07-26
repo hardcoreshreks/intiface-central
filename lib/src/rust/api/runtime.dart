@@ -6,8 +6,9 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `BACKDOOR_INCOMING_BROADCASTER`, `ENGINE_BROADCASTER`, `ENGINE_FRONTEND`, `ENGINE_NOTIFIER`, `ENGINE_SHUTDOWN`, `RUNTIME`, `RUN_STATUS`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `deref`, `deref`, `deref`, `deref`, `deref`, `deref`, `deref`, `initialize`, `initialize`, `initialize`, `initialize`, `initialize`, `initialize`, `initialize`
+// These functions are ignored because they are not marked as `pub`: `dispose_runtime`, `is_started`, `new`, `new`, `notified`, `reaper_loop`, `request`, `reserve_start`, `rollback_published_start`, `rollback_start`, `start_reserved`, `start`, `stop`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `BACKDOOR_INCOMING_BROADCASTER`, `ENGINE_BROADCASTER`, `ENGINE_SHUTDOWN`, `EngineCleanupTimeout`, `LIFECYCLE`, `LifecycleCoordinator`, `LifecycleState`, `ReaperCommand`, `ReaperStart`, `SharedLifecycle`, `StopSignal`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `deref`, `deref`, `deref`, `deref`, `eq`, `fmt`, `fmt`, `fmt`, `initialize`, `initialize`, `initialize`, `initialize`
 
 Future<bool> rustRuntimeStarted() =>
     RustLib.instance.api.crateApiRuntimeRustRuntimeStarted();
@@ -20,10 +21,10 @@ Future<bool> isEngineShutdown() =>
 Stream<String> runEngine({required EngineOptionsExternal args}) =>
     RustLib.instance.api.crateApiRuntimeRunEngine(args: args);
 
+Future<void> stopEngine() => RustLib.instance.api.crateApiRuntimeStopEngine();
+
 Future<void> sendRuntimeMsg({required String msgJson}) =>
     RustLib.instance.api.crateApiRuntimeSendRuntimeMsg(msgJson: msgJson);
-
-Future<void> stopEngine() => RustLib.instance.api.crateApiRuntimeStopEngine();
 
 Future<void> sendBackendServerMessage({required String msg}) =>
     RustLib.instance.api.crateApiRuntimeSendBackendServerMessage(msg: msg);

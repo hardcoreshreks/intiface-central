@@ -3037,12 +3037,12 @@ fn wire__crate__api__runtime__stop_engine_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok({
-                        crate::api::runtime::stop_engine();
-                    })?;
-                    Ok(output_ok)
-                })())
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || {
+                        let output_ok = crate::api::runtime::stop_engine()?;
+                        Ok(output_ok)
+                    })(),
+                )
             }
         },
     )
