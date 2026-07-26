@@ -21,15 +21,17 @@ void main() {
       // Mock the pubspec.yaml asset so Pubspec.parse works
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMessageHandler('flutter/assets', (message) async {
-        final key = utf8.decode(message!.buffer.asUint8List());
-        if (key == 'pubspec.yaml') {
-          return ByteData.sublistView(utf8.encode(
-            'name: intiface_central\nversion: 3.0.0+1\n'
-            'environment:\n  sdk: ">=3.8.0 <4.0.0"\n',
-          ));
-        }
-        return null;
-      });
+            final key = utf8.decode(message!.buffer.asUint8List());
+            if (key == 'pubspec.yaml') {
+              return ByteData.sublistView(
+                utf8.encode(
+                  'name: intiface_central\nversion: 3.0.0+1\n'
+                  'environment:\n  sdk: ">=3.8.0 <4.0.0"\n',
+                ),
+              );
+            }
+            return null;
+          });
     });
 
     tearDown(() async {
