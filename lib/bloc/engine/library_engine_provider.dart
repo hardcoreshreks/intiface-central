@@ -3,7 +3,26 @@ import 'package:intiface_central/src/rust/api/runtime.dart';
 import 'package:intiface_central/bloc/engine/engine_provider.dart';
 import 'package:loggy/loggy.dart';
 
+abstract interface class NativeEngineLifecycle {
+  Future<void> stop();
+  Future<bool> runtimeStarted();
+}
+
+class RustNativeEngineLifecycle implements NativeEngineLifecycle {
+  const RustNativeEngineLifecycle();
+
+  @override
+  Future<void> stop() => stopEngine();
+
+  @override
+  Future<bool> runtimeStarted() => rustRuntimeStarted();
+}
+
 class LibraryEngineProvider implements EngineProvider {
+  LibraryEngineProvider({NativeEngineLifecycle? nativeLifecycle})
+    : _nativeLifecycle = nativeLifecycle ?? const RustNativeEngineLifecycle();
+
+  final NativeEngineLifecycle _nativeLifecycle;
   StreamController<String> _processMessageStream = StreamController();
   Stream<String>? _stream;
 
@@ -35,14 +54,17 @@ class LibraryEngineProvider implements EngineProvider {
   }
 
   @override
-  Future<bool> runtimeStarted() async {
-    return await rustRuntimeStarted();
-  }
+  Future<bool> runtimeStarted() => _nativeLifecycle.runtimeStarted();
 
   @override
   Future<void> stop() async {
-    await stopEngine();
-    logInfo("Engine stopped");
+    try {
+      await _nativeLifecycle.stop();
+      logInfo("Engine stopped");
+    } catch (error) {
+      logError("Engine stop failed: $error");
+      rethrow;
+    }
   }
 
   @override
