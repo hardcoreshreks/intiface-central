@@ -1,9 +1,8 @@
-
-use std::sync::Arc;
-use parking_lot::RwLock;
+use anyhow;
 use buttplug_server_device_config::{DeviceConfigurationManager, load_protocol_configs};
 use lazy_static::lazy_static;
-use anyhow;
+use parking_lot::RwLock;
+use std::sync::Arc;
 
 lazy_static! {
   // This is a weird wrapping, but there's a reason for it. The DCM has internal mutability, but we
@@ -25,7 +24,8 @@ pub fn setup_device_configuration_manager(
       load_protocol_configs(&base_config, &user_config, false)
         .map_err(|x| anyhow::anyhow!(format!("{:?}", x)))?
         .finish()
-        .map_err(|x| anyhow::anyhow!(format!("{:?}", x)))?);
+        .map_err(|x| anyhow::anyhow!(format!("{:?}", x)))?,
+    );
   }
   Ok(())
 }

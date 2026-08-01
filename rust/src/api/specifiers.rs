@@ -1,8 +1,11 @@
 use crate::api::device_config_manager::DEVICE_CONFIG_MANAGER;
 
-
-use buttplug_server_device_config::{ProtocolCommunicationSpecifier, SerialSpecifier, WebsocketSpecifier}; 
 use buttplug_server::device::protocol_impl::get_default_protocol_map;
+use buttplug_server_device_config::{
+  ProtocolCommunicationSpecifier,
+  SerialSpecifier,
+  WebsocketSpecifier,
+};
 
 #[derive(Debug, Clone)]
 pub struct ExposedSerialSpecifier {

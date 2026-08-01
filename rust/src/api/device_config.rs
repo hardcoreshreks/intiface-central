@@ -3,7 +3,19 @@ use std::collections::HashMap;
 use buttplug_core::message::{InputType, OutputType};
 use buttplug_core::util::range::RangeInclusive;
 use buttplug_core::util::small_vec_enum_map::{SmallVecEnumMap, VariantKey};
-use buttplug_server_device_config::{RangeWithLimit, ServerDeviceDefinition, ServerDeviceDefinitionBuilder, ServerDeviceFeature, ServerDeviceFeatureInput, ServerDeviceFeatureOutput, ServerDeviceFeatureOutputHwPositionWithDurationProperties, ServerDeviceFeatureOutputPositionProperties, ServerDeviceFeatureOutputValueProperties, UserDeviceIdentifier, save_user_config};
+use buttplug_server_device_config::{
+  RangeWithLimit,
+  ServerDeviceDefinition,
+  ServerDeviceDefinitionBuilder,
+  ServerDeviceFeature,
+  ServerDeviceFeatureInput,
+  ServerDeviceFeatureOutput,
+  ServerDeviceFeatureOutputHwPositionWithDurationProperties,
+  ServerDeviceFeatureOutputPositionProperties,
+  ServerDeviceFeatureOutputValueProperties,
+  UserDeviceIdentifier,
+  save_user_config,
+};
 use flutter_rust_bridge::frb;
 use uuid::Uuid;
 
@@ -17,7 +29,7 @@ use crate::api::device_config_manager::DEVICE_CONFIG_MANAGER;
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ExposedUserDeviceIdentifier {
   #[frb(ignore)]
-  identifier: UserDeviceIdentifier
+  identifier: UserDeviceIdentifier,
 }
 
 impl ExposedUserDeviceIdentifier {
@@ -39,18 +51,16 @@ impl ExposedUserDeviceIdentifier {
 
 impl ExposedUserDeviceIdentifier {
   #[frb(unignore, sync)]
-  pub fn new(address: String, protocol: String,identifier: Option<String>) -> Self {
+  pub fn new(address: String, protocol: String, identifier: Option<String>) -> Self {
     Self {
-      identifier: UserDeviceIdentifier::new(&address, &protocol, &identifier)
+      identifier: UserDeviceIdentifier::new(&address, &protocol, &identifier),
     }
   }
 }
 
 impl From<UserDeviceIdentifier> for ExposedUserDeviceIdentifier {
   fn from(value: UserDeviceIdentifier) -> Self {
-    Self {
-      identifier: value
-    }
+    Self { identifier: value }
   }
 }
 
@@ -73,9 +83,7 @@ pub struct ExposedServerDeviceDefinition {
 
 impl From<ServerDeviceDefinition> for ExposedServerDeviceDefinition {
   fn from(value: ServerDeviceDefinition) -> Self {
-    Self {
-      definition: value
-    }
+    Self { definition: value }
   }
 }
 
@@ -125,7 +133,7 @@ impl ExposedServerDeviceDefinition {
     self.definition.allow()
   }
 
-   #[frb(sync, setter)]
+  #[frb(sync, setter)]
   pub fn set_allow(&mut self, allow: bool) {
     let mut builder = ServerDeviceDefinitionBuilder::from_user(&self.definition);
     builder.allow(allow);
@@ -151,19 +159,37 @@ impl ExposedServerDeviceDefinition {
 
   #[frb(sync, getter)]
   pub fn features(&self) -> Vec<ExposedServerDeviceFeature> {
-    self.definition.features().values().map(|x| x.into()).collect()
+    self
+      .definition
+      .features()
+      .values()
+      .map(|x| x.into())
+      .collect()
   }
 
   #[frb(sync)]
   pub fn update_feature(&mut self, feature: &ExposedServerDeviceFeature) {
-    if self.definition.features().values().any(|x| x.id() == feature.id()) {
+    if self
+      .definition
+      .features()
+      .values()
+      .any(|x| x.id() == feature.id())
+    {
       ServerDeviceDefinitionBuilder::from_user(&self.definition).replace_feature(&feature.feature);
     }
   }
 
   #[frb(sync)]
-  pub fn update_feature_output_properties(&mut self, props: &ExposedServerDeviceFeatureOutputProperties) {
-    if let Some(f) = self.definition.features().values().find(|x| x.id() == props.feature_id) {
+  pub fn update_feature_output_properties(
+    &mut self,
+    props: &ExposedServerDeviceFeatureOutputProperties,
+  ) {
+    if let Some(f) = self
+      .definition
+      .features()
+      .values()
+      .find(|x| x.id() == props.feature_id)
+    {
       let mut f = f.clone();
       info!("Has feature");
       if f.output.contains_key(&props.output_type) {
@@ -178,10 +204,14 @@ impl ExposedServerDeviceDefinition {
           OutputType::Led => ServerDeviceFeatureOutput::Led(props.clone().into()),
           OutputType::Spray => ServerDeviceFeatureOutput::Spray(props.clone().into()),
           OutputType::Position => ServerDeviceFeatureOutput::Position(props.clone().into()),
-          OutputType::HwPositionWithDuration => ServerDeviceFeatureOutput::HwPositionWithDuration(props.clone().into()),
+          OutputType::HwPositionWithDuration => {
+            ServerDeviceFeatureOutput::HwPositionWithDuration(props.clone().into())
+          }
         };
         f.output.push(new_output);
-        self.definition = ServerDeviceDefinitionBuilder::from_user(&self.definition).replace_feature(&f).finish();
+        self.definition = ServerDeviceDefinitionBuilder::from_user(&self.definition)
+          .replace_feature(&f)
+          .finish();
       }
     }
   }
@@ -190,7 +220,7 @@ impl ExposedServerDeviceDefinition {
 #[frb(unignore, opaque, ignore_all)]
 #[derive(Debug, Clone)]
 pub struct ExposedServerDeviceFeature {
-  feature: ServerDeviceFeature
+  feature: ServerDeviceFeature,
 }
 
 impl ExposedServerDeviceFeature {
@@ -209,7 +239,10 @@ impl ExposedServerDeviceFeature {
     if self.feature.output.is_empty() {
       None
     } else {
-      Some(ExposedServerDeviceFeatureOutput::new(self.feature.id(), self.feature.output.clone()))
+      Some(ExposedServerDeviceFeatureOutput::new(
+        self.feature.id(),
+        self.feature.output.clone(),
+      ))
     }
   }
 
@@ -223,7 +256,9 @@ impl ExposedServerDeviceFeature {
     if self.feature.input.is_empty() {
       None
     } else {
-      Some(ExposedServerDeviceFeatureInput { input: self.feature.input.clone() })
+      Some(ExposedServerDeviceFeatureInput {
+        input: self.feature.input.clone(),
+      })
     }
   }
 }
@@ -232,7 +267,7 @@ impl From<&ServerDeviceFeature> for ExposedServerDeviceFeature {
   fn from(value: &ServerDeviceFeature) -> Self {
     info!("{}", value.id());
     Self {
-      feature: value.clone()
+      feature: value.clone(),
     }
   }
 }
@@ -243,7 +278,7 @@ pub struct ExposedServerDeviceFeatureOutput {
   #[ignore]
   feature_id: Uuid,
   #[ignore]
-  output: SmallVecEnumMap<ServerDeviceFeatureOutput, 1>
+  output: SmallVecEnumMap<ServerDeviceFeatureOutput, 1>,
 }
 
 impl ExposedServerDeviceFeatureOutput {
@@ -251,10 +286,19 @@ impl ExposedServerDeviceFeatureOutput {
     Self { feature_id, output }
   }
 
-  fn find_value_props(&self, output_type: OutputType) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.find_by_key(&output_type).and_then(|o| o.as_value_properties().map(|p| {
-      ExposedServerDeviceFeatureOutputProperties::new_from_value(self.feature_id, output_type, p.clone())
-    }))
+  fn find_value_props(
+    &self,
+    output_type: OutputType,
+  ) -> Option<ExposedServerDeviceFeatureOutputProperties> {
+    self.output.find_by_key(&output_type).and_then(|o| {
+      o.as_value_properties().map(|p| {
+        ExposedServerDeviceFeatureOutputProperties::new_from_value(
+          self.feature_id,
+          output_type,
+          p.clone(),
+        )
+      })
+    })
   }
 
   #[frb(sync, getter)]
@@ -294,24 +338,42 @@ impl ExposedServerDeviceFeatureOutput {
 
   #[frb(sync, getter)]
   pub fn position(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.find_by_key(&OutputType::Position).and_then(|o| {
-      if let ServerDeviceFeatureOutput::Position(p) = o {
-        Some(ExposedServerDeviceFeatureOutputProperties::new_from_position(self.feature_id, OutputType::Position, p.clone()))
-      } else {
-        None
-      }
-    })
+    self
+      .output
+      .find_by_key(&OutputType::Position)
+      .and_then(|o| {
+        if let ServerDeviceFeatureOutput::Position(p) = o {
+          Some(
+            ExposedServerDeviceFeatureOutputProperties::new_from_position(
+              self.feature_id,
+              OutputType::Position,
+              p.clone(),
+            ),
+          )
+        } else {
+          None
+        }
+      })
   }
 
   #[frb(sync, getter)]
   pub fn position_with_duration(&self) -> Option<ExposedServerDeviceFeatureOutputProperties> {
-    self.output.find_by_key(&OutputType::HwPositionWithDuration).and_then(|o| {
-      if let ServerDeviceFeatureOutput::HwPositionWithDuration(p) = o {
-        Some(ExposedServerDeviceFeatureOutputProperties::new_from_position_with_duration(self.feature_id, OutputType::HwPositionWithDuration, p.clone()))
-      } else {
-        None
-      }
-    })
+    self
+      .output
+      .find_by_key(&OutputType::HwPositionWithDuration)
+      .and_then(|o| {
+        if let ServerDeviceFeatureOutput::HwPositionWithDuration(p) = o {
+          Some(
+            ExposedServerDeviceFeatureOutputProperties::new_from_position_with_duration(
+              self.feature_id,
+              OutputType::HwPositionWithDuration,
+              p.clone(),
+            ),
+          )
+        } else {
+          None
+        }
+      })
   }
 }
 
@@ -319,7 +381,7 @@ impl ExposedServerDeviceFeatureOutput {
 #[derive(Debug, Clone)]
 pub struct ExposedServerDeviceFeatureInput {
   #[ignore]
-  input: SmallVecEnumMap<ServerDeviceFeatureInput, 1>
+  input: SmallVecEnumMap<ServerDeviceFeatureInput, 1>,
 }
 
 impl ExposedServerDeviceFeatureInput {
@@ -342,7 +404,11 @@ pub struct ExposedServerDeviceFeatureOutputProperties {
 }
 
 impl ExposedServerDeviceFeatureOutputProperties {
-  fn new_from_value(feature_id: Uuid, output_type: OutputType, props: ServerDeviceFeatureOutputValueProperties) -> Self {
+  fn new_from_value(
+    feature_id: Uuid,
+    output_type: OutputType,
+    props: ServerDeviceFeatureOutputValueProperties,
+  ) -> Self {
     Self {
       feature_id,
       output_type,
@@ -350,11 +416,15 @@ impl ExposedServerDeviceFeatureOutputProperties {
       position: None,
       duration: None,
       disabled: props.disabled,
-      reverse_position: false
+      reverse_position: false,
     }
   }
 
-  fn new_from_position_with_duration(feature_id: Uuid, output_type: OutputType, props: ServerDeviceFeatureOutputHwPositionWithDurationProperties) -> Self {
+  fn new_from_position_with_duration(
+    feature_id: Uuid,
+    output_type: OutputType,
+    props: ServerDeviceFeatureOutputHwPositionWithDurationProperties,
+  ) -> Self {
     Self {
       feature_id,
       output_type,
@@ -362,11 +432,15 @@ impl ExposedServerDeviceFeatureOutputProperties {
       position: Some((&props.value).into()),
       duration: Some((&props.duration).into()),
       disabled: props.disabled,
-      reverse_position: props.reverse_position
+      reverse_position: props.reverse_position,
     }
   }
 
-  fn new_from_position(feature_id: Uuid, output_type: OutputType, props: ServerDeviceFeatureOutputPositionProperties) -> Self {
+  fn new_from_position(
+    feature_id: Uuid,
+    output_type: OutputType,
+    props: ServerDeviceFeatureOutputPositionProperties,
+  ) -> Self {
     Self {
       feature_id,
       output_type,
@@ -374,7 +448,7 @@ impl ExposedServerDeviceFeatureOutputProperties {
       position: Some((&props.value).into()),
       duration: None,
       disabled: props.disabled,
-      reverse_position: props.reverse_position
+      reverse_position: props.reverse_position,
     }
   }
 
@@ -406,12 +480,12 @@ impl ExposedServerDeviceFeatureOutputProperties {
   #[frb(sync, setter)]
   pub fn set_duration(&mut self, duration: Option<ExposedRangeWithLimit>) {
     self.duration = duration;
-  }  
+  }
 
   #[frb(sync, getter)]
   pub fn disabled(&self) -> bool {
     self.disabled
-  }    
+  }
 
   #[frb(sync, getter)]
   pub fn reverse_position(&self) -> bool {
@@ -421,12 +495,12 @@ impl ExposedServerDeviceFeatureOutputProperties {
   #[frb(sync, setter)]
   pub fn set_disabled(&mut self, v: bool) {
     self.disabled = v;
-  }    
+  }
 
   #[frb(sync, setter)]
   pub fn set_reverse_position(&mut self, v: bool) {
     self.reverse_position = v;
-  }   
+  }
 }
 
 // TODO This should be TryFrom, just in case we try to convert the wrong type.
@@ -437,16 +511,29 @@ impl From<ExposedServerDeviceFeatureOutputProperties> for ServerDeviceFeatureOut
 }
 
 // TODO This should be TryFrom, just in case we try to convert the wrong type.
-impl From<ExposedServerDeviceFeatureOutputProperties> for ServerDeviceFeatureOutputPositionProperties {
+impl From<ExposedServerDeviceFeatureOutputProperties>
+  for ServerDeviceFeatureOutputPositionProperties
+{
   fn from(value: ExposedServerDeviceFeatureOutputProperties) -> Self {
-    ServerDeviceFeatureOutputPositionProperties::new(value.position.unwrap().into(), value.disabled, value.reverse_position)
-  } 
+    ServerDeviceFeatureOutputPositionProperties::new(
+      value.position.unwrap().into(),
+      value.disabled,
+      value.reverse_position,
+    )
+  }
 }
 
 // TODO This should be TryFrom, just in case we try to convert the wrong type.
-impl From<ExposedServerDeviceFeatureOutputProperties> for ServerDeviceFeatureOutputHwPositionWithDurationProperties {
+impl From<ExposedServerDeviceFeatureOutputProperties>
+  for ServerDeviceFeatureOutputHwPositionWithDurationProperties
+{
   fn from(value: ExposedServerDeviceFeatureOutputProperties) -> Self {
-    ServerDeviceFeatureOutputHwPositionWithDurationProperties::new(value.position.unwrap().into(), value.duration.unwrap().into(), value.disabled, value.reverse_position)
+    ServerDeviceFeatureOutputHwPositionWithDurationProperties::new(
+      value.position.unwrap().into(),
+      value.duration.unwrap().into(),
+      value.disabled,
+      value.reverse_position,
+    )
   }
 }
 
@@ -454,7 +541,7 @@ impl From<ExposedServerDeviceFeatureOutputProperties> for ServerDeviceFeatureOut
 #[derive(Debug, Clone)]
 pub struct ExposedRangeWithLimit {
   base: RangeInclusive<i32>,
-  user: Option<RangeInclusive<u32>>
+  user: Option<RangeInclusive<u32>>,
 }
 
 impl ExposedRangeWithLimit {
@@ -482,7 +569,7 @@ impl From<&RangeWithLimit> for ExposedRangeWithLimit {
   fn from(value: &RangeWithLimit) -> Self {
     Self {
       base: value.base.clone(),
-      user: value.user.clone()
+      user: value.user.clone(),
     }
   }
 }
@@ -518,8 +605,8 @@ pub fn get_user_config_str() -> String {
   save_user_config(&dcm).unwrap()
 }
 
-pub fn get_device_definitions(
-) -> HashMap<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> {
+pub fn get_device_definitions()
+-> HashMap<ExposedUserDeviceIdentifier, ExposedServerDeviceDefinition> {
   let dcm = DEVICE_CONFIG_MANAGER
     .try_read()
     .expect("We should have a reader at this point");
@@ -541,13 +628,18 @@ mod tests {
 
   // Tests that touch DEVICE_CONFIG_MANAGER must hold this lock
   static DCM_TEST_MUTEX: Mutex<()> = Mutex::new(());
-  use buttplug_server_device_config::{
-    ServerDeviceDefinitionBuilder, ServerDeviceFeature, ServerDeviceFeatureOutput,
-    ServerDeviceFeatureOutputHwPositionWithDurationProperties,
-    ServerDeviceFeatureOutputPositionProperties, RangeWithLimit,
-    load_protocol_configs, save_user_config, UserDeviceIdentifier,
-  };
   use buttplug_core::util::small_vec_enum_map::SmallVecEnumMap;
+  use buttplug_server_device_config::{
+    RangeWithLimit,
+    ServerDeviceDefinitionBuilder,
+    ServerDeviceFeature,
+    ServerDeviceFeatureOutput,
+    ServerDeviceFeatureOutputHwPositionWithDurationProperties,
+    ServerDeviceFeatureOutputPositionProperties,
+    UserDeviceIdentifier,
+    load_protocol_configs,
+    save_user_config,
+  };
   use uuid::Uuid;
 
   fn tcode_like_feature() -> ServerDeviceFeature {
@@ -566,11 +658,20 @@ mod tests {
     let output: SmallVecEnumMap<ServerDeviceFeatureOutput, 1> = vec![
       ServerDeviceFeatureOutput::Position(position_props),
       ServerDeviceFeatureOutput::HwPositionWithDuration(hw_pos_duration_props),
-    ].into();
+    ]
+    .into();
 
     let base_id = Uuid::new_v4();
     let feature_id = Uuid::new_v4();
-    ServerDeviceFeature::new(0, String::new(), feature_id, Some(base_id), None, output, Default::default())
+    ServerDeviceFeature::new(
+      0,
+      String::new(),
+      feature_id,
+      Some(base_id),
+      None,
+      output,
+      Default::default(),
+    )
   }
 
   fn build_tcode_definition() -> ExposedServerDeviceDefinition {
@@ -585,7 +686,9 @@ mod tests {
     let user_builder = ServerDeviceDefinitionBuilder::from_base(&base_def, user_def_id, true);
     let user_def = user_builder.finish();
 
-    ExposedServerDeviceDefinition { definition: user_def }
+    ExposedServerDeviceDefinition {
+      definition: user_def,
+    }
   }
 
   #[test]
@@ -599,10 +702,15 @@ mod tests {
 
     // Both output types should be present
     let position_props = output.position().expect("Should have Position output");
-    let hw_pos_props = output.position_with_duration().expect("Should have HwPositionWithDuration output");
+    let hw_pos_props = output
+      .position_with_duration()
+      .expect("Should have HwPositionWithDuration output");
 
     assert!(!position_props.disabled, "Position should start enabled");
-    assert!(!hw_pos_props.disabled, "HwPositionWithDuration should start enabled");
+    assert!(
+      !hw_pos_props.disabled,
+      "HwPositionWithDuration should start enabled"
+    );
 
     // Disable HwPositionWithDuration (mimics what the UI does)
     let mut hw_pos_props = output.position_with_duration().unwrap();
@@ -615,7 +723,9 @@ mod tests {
     let output = feature.output().expect("Feature should have output");
 
     let position_after = output.position().expect("Position should still exist");
-    let hw_pos_after = output.position_with_duration().expect("HwPositionWithDuration should still exist");
+    let hw_pos_after = output
+      .position_with_duration()
+      .expect("HwPositionWithDuration should still exist");
 
     assert!(
       !position_after.disabled,
@@ -632,13 +742,17 @@ mod tests {
     let _guard = DCM_TEST_MUTEX.lock().unwrap();
     // Set up the config manager with base config
     let mut dcm_lock = DEVICE_CONFIG_MANAGER.try_write().unwrap();
-    let base_dcm = load_protocol_configs(&None, &None, false).unwrap().finish().unwrap();
+    let base_dcm = load_protocol_configs(&None, &None, false)
+      .unwrap()
+      .finish()
+      .unwrap();
     *dcm_lock = std::sync::Arc::new(base_dcm);
     drop(dcm_lock);
 
     // Create a user definition for a TCode-like device
     let mut def = build_tcode_definition();
-    let identifier = UserDeviceIdentifier::new("test-tcode-001", "tcode-v03", &Some("default".to_owned()));
+    let identifier =
+      UserDeviceIdentifier::new("test-tcode-001", "tcode-v03", &Some("default".to_owned()));
 
     // Disable HwPositionWithDuration
     let features = def.features();
@@ -658,11 +772,16 @@ mod tests {
 
     // Parse the JSON and verify the disabled flags are on the correct output types
     let parsed: serde_json::Value = serde_json::from_str(&config_json).unwrap();
-    let devices = parsed["user_configs"]["devices"].as_array()
-      .expect(&format!("Expected devices array in config JSON:\n{config_json}"));
+    let devices = parsed["user_configs"]["devices"]
+      .as_array()
+      .expect(&format!(
+        "Expected devices array in config JSON:\n{config_json}"
+      ));
     let device = &devices[0];
-    let features = device["config"]["features"].as_array()
-      .expect(&format!("Expected features array in device.config:\n{}", serde_json::to_string_pretty(device).unwrap()));
+    let features = device["config"]["features"].as_array().expect(&format!(
+      "Expected features array in device.config:\n{}",
+      serde_json::to_string_pretty(device).unwrap()
+    ));
     let feature = &features[0];
     let output = &feature["output"];
 
@@ -673,11 +792,13 @@ mod tests {
       serde_json::to_string_pretty(&output).unwrap()
     );
 
-    let position_disabled = output.get("position")
+    let position_disabled = output
+      .get("position")
       .and_then(|p| p.get("disabled"))
       .and_then(|d| d.as_bool())
       .unwrap_or(false);
-    let hw_pos_disabled = output.get("hw_position_with_duration")
+    let hw_pos_disabled = output
+      .get("hw_position_with_duration")
       .and_then(|p| p.get("disabled"))
       .and_then(|d| d.as_bool())
       .unwrap_or(false);
@@ -697,27 +818,46 @@ mod tests {
     let _guard = DCM_TEST_MUTEX.lock().unwrap();
     // Use the REAL TCode base definition from the config system
     let mut dcm_lock = DEVICE_CONFIG_MANAGER.try_write().unwrap();
-    let base_dcm = load_protocol_configs(&None, &None, false).unwrap().finish().unwrap();
+    let base_dcm = load_protocol_configs(&None, &None, false)
+      .unwrap()
+      .finish()
+      .unwrap();
     *dcm_lock = std::sync::Arc::new(base_dcm);
     drop(dcm_lock);
 
     // Look up a TCode device definition (simulates first connection)
     let dcm = DEVICE_CONFIG_MANAGER.try_read().unwrap();
-    let identifier = UserDeviceIdentifier::new("test-serial-tcode", "tcode-v03", &Some("default".to_owned()));
-    let base_def = dcm.device_definition(&identifier)
+    let identifier = UserDeviceIdentifier::new(
+      "test-serial-tcode",
+      "tcode-v03",
+      &Some("default".to_owned()),
+    );
+    let base_def = dcm
+      .device_definition(&identifier)
       .expect("TCode v03 should exist in base config");
     drop(dcm);
 
     // Wrap in our exposed type
-    let mut exposed_def = ExposedServerDeviceDefinition { definition: base_def };
+    let mut exposed_def = ExposedServerDeviceDefinition {
+      definition: base_def,
+    };
 
     // Verify the feature has both Position and HwPositionWithDuration
     let features = exposed_def.features();
-    assert!(!features.is_empty(), "TCode should have at least one feature");
+    assert!(
+      !features.is_empty(),
+      "TCode should have at least one feature"
+    );
     let feature = &features[0];
     let output = feature.output().expect("TCode feature should have output");
-    assert!(output.position().is_some(), "TCode should have Position output");
-    assert!(output.position_with_duration().is_some(), "TCode should have HwPositionWithDuration output");
+    assert!(
+      output.position().is_some(),
+      "TCode should have Position output"
+    );
+    assert!(
+      output.position_with_duration().is_some(),
+      "TCode should have HwPositionWithDuration output"
+    );
 
     // Disable HwPositionWithDuration
     let mut hw_pos_props = output.position_with_duration().unwrap();
@@ -744,16 +884,23 @@ mod tests {
 
     // Retrieve the reloaded definition
     let dcm = DEVICE_CONFIG_MANAGER.try_read().unwrap();
-    let reloaded_def = dcm.device_definition(&identifier)
+    let reloaded_def = dcm
+      .device_definition(&identifier)
       .expect("Should find TCode device after reload");
 
-    let exposed_reloaded = ExposedServerDeviceDefinition { definition: reloaded_def };
+    let exposed_reloaded = ExposedServerDeviceDefinition {
+      definition: reloaded_def,
+    };
     let features = exposed_reloaded.features();
     let feature = &features[0];
     let output = feature.output().expect("Should have output after reload");
 
-    let position_after = output.position().expect("Position should exist after reload");
-    let hw_pos_after = output.position_with_duration().expect("HwPositionWithDuration should exist after reload");
+    let position_after = output
+      .position()
+      .expect("Position should exist after reload");
+    let hw_pos_after = output
+      .position_with_duration()
+      .expect("HwPositionWithDuration should exist after reload");
 
     assert!(
       !position_after.disabled,
@@ -770,7 +917,10 @@ mod tests {
     let _guard = DCM_TEST_MUTEX.lock().unwrap();
     // Load fresh config
     let mut dcm_lock = DEVICE_CONFIG_MANAGER.try_write().unwrap();
-    let base_dcm = load_protocol_configs(&None, &None, false).unwrap().finish().unwrap();
+    let base_dcm = load_protocol_configs(&None, &None, false)
+      .unwrap()
+      .finish()
+      .unwrap();
     *dcm_lock = std::sync::Arc::new(base_dcm);
     drop(dcm_lock);
 
@@ -782,7 +932,8 @@ mod tests {
       "simulated",
       &Some("simulated-stroker".to_owned()),
     );
-    let def = dcm.device_definition(&identifier)
+    let def = dcm
+      .device_definition(&identifier)
       .expect("Simulated stroker should resolve a definition");
     drop(dcm);
 
@@ -794,8 +945,7 @@ mod tests {
     let feature = &features[0];
     assert_eq!(feature.description(), "Linear Axis");
 
-    let output = feature.output()
-      .expect("Feature should have output");
+    let output = feature.output().expect("Feature should have output");
     let position = output.position();
     let hw_pos = output.position_with_duration();
 

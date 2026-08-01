@@ -2,13 +2,12 @@ use std::sync::Arc;
 
 use flutter_rust_bridge::frb;
 use lazy_static::lazy_static;
-use once_cell::sync::OnceCell;
-use sentry::ClientInitGuard;
 use log::*;
+use once_cell::sync::OnceCell;
 use parking_lot::Mutex;
+use sentry::ClientInitGuard;
 
 use crate::{frb_generated::StreamSink, logging::FlutterTracingWriter};
-
 
 static CRASH_REPORTING: OnceCell<ClientInitGuard> = OnceCell::new();
 lazy_static! {

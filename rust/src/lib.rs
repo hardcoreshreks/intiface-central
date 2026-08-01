@@ -7,6 +7,4 @@ mod in_process_frontend;
 mod logging;
 mod mobile_init;
 
-pub use api::{
-  runtime::EngineOptionsExternal
-};
+pub use api::runtime::EngineOptionsExternal;

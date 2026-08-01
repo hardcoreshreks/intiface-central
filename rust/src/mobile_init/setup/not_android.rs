@@ -1,5 +1,5 @@
-use crate::mobile_init::MobileInitError;
 use crate::frb_generated::StreamSink;
+use crate::mobile_init::MobileInitError;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use tokio::runtime::Runtime;
 

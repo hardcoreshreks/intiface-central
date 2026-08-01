@@ -1,9 +1,15 @@
-use async_trait::async_trait;
 use crate::frb_generated::StreamSink;
+use async_trait::async_trait;
 use futures::FutureExt;
 use intiface_engine::{EngineMessage, Frontend, IntifaceError, IntifaceMessage};
-use std::{future::Future, sync::{Arc, atomic::{AtomicBool, Ordering}}};
-use tokio::sync::{broadcast, Notify};
+use std::{
+  future::Future,
+  sync::{
+    Arc,
+    atomic::{AtomicBool, Ordering},
+  },
+};
+use tokio::sync::{Notify, broadcast};
 
 fn is_engine_server_created_message(msg: &EngineMessage) -> bool {
   matches!(msg, EngineMessage::EngineServerCreated { .. })

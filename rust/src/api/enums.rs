@@ -1,4 +1,3 @@
-
 pub use buttplug_core::message::{InputCommandType, InputType, OutputType};
 use flutter_rust_bridge::frb;
 

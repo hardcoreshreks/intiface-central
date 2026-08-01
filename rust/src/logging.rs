@@ -1,21 +1,21 @@
-use crossbeam_channel::{bounded, Sender};
-use crate::frb_generated::StreamSink;
 use crate::api::runtime::is_engine_shutdown;
+use crate::frb_generated::StreamSink;
+use crossbeam_channel::{Sender, bounded};
+use lazy_static::lazy_static;
+use log::*;
+use parking_lot::Mutex;
 use std::{
-  sync::{atomic::AtomicBool, Arc, Once},
+  sync::{Arc, Once, atomic::AtomicBool},
   thread::JoinHandle,
   time::Duration,
 };
 use tracing::Level;
+use tracing_subscriber::fmt::MakeWriter;
 use tracing_subscriber::{
   filter::{EnvFilter, LevelFilter},
   layer::SubscriberExt,
   util::SubscriberInitExt,
 };
-use log::*;
-use tracing_subscriber::fmt::MakeWriter;
-use lazy_static::lazy_static;
-use parking_lot::Mutex;
 
 /// Log messages matching these patterns are filtered out (not sent to Flutter).
 /// These are benign errors from third-party libraries that would confuse users.
@@ -26,7 +26,9 @@ const FILTERED_LOG_PATTERNS: &[&str] = &[
 
 /// Check if a log message should be filtered out.
 fn should_filter_log(msg: &str) -> bool {
-  FILTERED_LOG_PATTERNS.iter().any(|pattern| msg.contains(pattern))
+  FILTERED_LOG_PATTERNS
+    .iter()
+    .any(|pattern| msg.contains(pattern))
 }
 
 /// Guards subscriber initialization so it only runs once per process lifetime.
@@ -135,7 +137,9 @@ impl FlutterTracingWriter {
             if !is_engine_shutdown() && !should_filter_log(&msg) {
               if std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                 let _ = sink.add(msg);
-              })).is_err() {
+              }))
+              .is_err()
+              {
                 break;
               }
             }
@@ -147,11 +151,14 @@ impl FlutterTracingWriter {
         // Check shutdown flag before sending to avoid SendError.
         // Also filter out benign third-party library errors.
         if let Ok(msg) = receiver.recv_timeout(Duration::from_millis(10))
-          && !is_engine_shutdown() && !should_filter_log(&msg)
+          && !is_engine_shutdown()
+          && !should_filter_log(&msg)
         {
           if std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             let _ = sink.add(msg);
-          })).is_err() {
+          }))
+          .is_err()
+          {
             break;
           }
         }
