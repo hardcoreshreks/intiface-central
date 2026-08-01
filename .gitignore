@@ -150,3 +150,5 @@ target
 # Local Cargo dependency overrides
 /.cargo/config.toml
 docs/assets/screenshots/generated
+# Local dev scratch
+/reset_lovense_deprecation.sh
