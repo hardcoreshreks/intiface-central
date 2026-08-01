@@ -3033,7 +3033,6 @@ const _: fn() = || {
   let _: Option<String> = EngineOptionsExternal.repeater_remote_address;
   let _: Option<u16> = EngineOptionsExternal.rest_api_port;
   let _: bool = EngineOptionsExternal.emit_output_observations;
-  let _: bool = EngineOptionsExternal.emit_task_events;
 };
 
 // Section: related_funcs
@@ -3054,9 +3053,9 @@ flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
   flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceFeatureOutput>
 );
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
-    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<
-        ExposedServerDeviceFeatureOutputProperties,
-    >
+  flutter_rust_bridge::for_generated::RustAutoOpaqueInner<
+    ExposedServerDeviceFeatureOutputProperties,
+  >
 );
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
   flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>
@@ -3302,7 +3301,6 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
     let mut var_repeaterRemoteAddress = <Option<String>>::sse_decode(deserializer);
     let mut var_restApiPort = <Option<u16>>::sse_decode(deserializer);
     let mut var_emitOutputObservations = <bool>::sse_decode(deserializer);
-    let mut var_emitTaskEvents = <bool>::sse_decode(deserializer);
     return crate::api::runtime::EngineOptionsExternal {
       device_config_json: var_deviceConfigJson,
       user_device_config_json: var_userDeviceConfigJson,
@@ -3333,7 +3331,6 @@ impl SseDecode for crate::api::runtime::EngineOptionsExternal {
       repeater_remote_address: var_repeaterRemoteAddress,
       rest_api_port: var_restApiPort,
       emit_output_observations: var_emitOutputObservations,
-      emit_task_events: var_emitTaskEvents,
     };
   }
 }
@@ -4100,7 +4097,6 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<crate::api::runtime::EngineOpt
       self.0.repeater_remote_address.into_into_dart().into_dart(),
       self.0.rest_api_port.into_into_dart().into_dart(),
       self.0.emit_output_observations.into_into_dart().into_dart(),
-      self.0.emit_task_events.into_into_dart().into_dart(),
     ]
     .into_dart()
   }
@@ -4320,12 +4316,7 @@ impl SseEncode for flutter_rust_bridge::for_generated::anyhow::Error {
 impl SseEncode for ExposedRangeWithLimit {
   // Codec=Sse (Serialization based), see doc to use other codecs
   fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-    <RustOpaqueMoi<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedRangeWithLimit>,
-        >>::sse_encode(
-            flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self),
-            serializer,
-        );
+    <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedRangeWithLimit>>>::sse_encode(flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self), serializer);
   }
 }
 
@@ -4566,7 +4557,6 @@ impl SseEncode for crate::api::runtime::EngineOptionsExternal {
     <Option<String>>::sse_encode(self.repeater_remote_address, serializer);
     <Option<u16>>::sse_encode(self.rest_api_port, serializer);
     <bool>::sse_encode(self.emit_output_observations, serializer);
-    <bool>::sse_encode(self.emit_task_events, serializer);
   }
 }
 
@@ -4973,18 +4963,14 @@ mod io {
   pub extern "C" fn frbgen_intiface_central_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
     ptr: *const std::ffi::c_void,
   ) {
-    MoiArc::<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>,
-        >::increment_strong_count(ptr as _);
+    MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>>::increment_strong_count(ptr as _);
   }
 
   #[unsafe(no_mangle)]
   pub extern "C" fn frbgen_intiface_central_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
     ptr: *const std::ffi::c_void,
   ) {
-    MoiArc::<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>,
-        >::decrement_strong_count(ptr as _);
+    MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>>::decrement_strong_count(ptr as _);
   }
 
   #[unsafe(no_mangle)]
@@ -5063,18 +5049,14 @@ mod io {
   pub extern "C" fn frbgen_intiface_central_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
     ptr: *const std::ffi::c_void,
   ) {
-    MoiArc::<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>,
-        >::increment_strong_count(ptr as _);
+    MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>>::increment_strong_count(ptr as _);
   }
 
   #[unsafe(no_mangle)]
   pub extern "C" fn frbgen_intiface_central_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
     ptr: *const std::ffi::c_void,
   ) {
-    MoiArc::<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>,
-        >::decrement_strong_count(ptr as _);
+    MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>>::decrement_strong_count(ptr as _);
   }
 }
 #[cfg(not(target_family = "wasm"))]
@@ -5118,18 +5100,14 @@ mod web {
   pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
     ptr: *const std::ffi::c_void,
   ) {
-    MoiArc::<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>,
-        >::increment_strong_count(ptr as _);
+    MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>>::increment_strong_count(ptr as _);
   }
 
   #[wasm_bindgen]
   pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedServerDeviceDefinition(
     ptr: *const std::ffi::c_void,
   ) {
-    MoiArc::<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>,
-        >::decrement_strong_count(ptr as _);
+    MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedServerDeviceDefinition>>::decrement_strong_count(ptr as _);
   }
 
   #[wasm_bindgen]
@@ -5208,18 +5186,14 @@ mod web {
   pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
     ptr: *const std::ffi::c_void,
   ) {
-    MoiArc::<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>,
-        >::increment_strong_count(ptr as _);
+    MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>>::increment_strong_count(ptr as _);
   }
 
   #[wasm_bindgen]
   pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerExposedUserDeviceIdentifier(
     ptr: *const std::ffi::c_void,
   ) {
-    MoiArc::<
-            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>,
-        >::decrement_strong_count(ptr as _);
+    MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ExposedUserDeviceIdentifier>>::decrement_strong_count(ptr as _);
   }
 }
 #[cfg(target_family = "wasm")]

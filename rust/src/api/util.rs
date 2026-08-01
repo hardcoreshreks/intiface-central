@@ -36,12 +36,10 @@ pub fn shutdown_logging() {
 pub fn crash_reporting(sentry_api_key: String) {
   // Set up Sentry
   info!("Initializing native crash reporting.");
-  let _ = CRASH_REPORTING.set(sentry::init((
-    sentry_api_key,
-    sentry::ClientOptions {
-      release: sentry::release_name!(),
-      ..Default::default()
-    },
-  )));
+  let _ = CRASH_REPORTING.set(sentry::init(
+    sentry::ClientOptions::new()
+      .dsn(&sentry_api_key)
+      .maybe_release(sentry::release_name!()),
+  ));
   info!("Native crash reporting initialized");
 }

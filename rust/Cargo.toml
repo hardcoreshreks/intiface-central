@@ -14,14 +14,14 @@ crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
 flutter_rust_bridge = { version = "=2.12.0", features = ["uuid"] }
-# buttplug_core = "10.0.3"
-# buttplug_server = "10.0.4"
-# buttplug_server_device_config = "10.1.1"
-# intiface-engine = "4.0.4"
-buttplug_core = { path = "../../buttplug/crates/buttplug_core" }
-buttplug_server = { path = "../../buttplug/crates/buttplug_server" }
-buttplug_server_device_config = { path = "../../buttplug/crates/buttplug_server_device_config" }
-intiface-engine = { path = "../../buttplug/crates/intiface_engine" }
+buttplug_core = "11.0.0"
+buttplug_server = "11.0.0"
+buttplug_server_device_config = "11.0.0"
+intiface-engine = "4.1.0"
+#buttplug_core = { path = "../../buttplug/crates/buttplug_core" }
+#buttplug_server = { path = "../../buttplug/crates/buttplug_server" }
+#buttplug_server_device_config = { path = "../../buttplug/crates/buttplug_server_device_config" }
+#intiface-engine = { path = "../../buttplug/crates/intiface_engine" }
 log = "0.4.33"
 lazy_static = "1.5.0"
 once_cell = "1.21.4"
@@ -41,7 +41,7 @@ tracing = "0.1.44"
 tracing-futures = "0.2.5"
 tracing-subscriber = "0.3.23"
 log-panics = { version = "2.1.0", features = ["with-backtrace"] }
-sentry = { version = "0.41.0", default-features = false, features = ["backtrace", "contexts", "panic", "debug-images", "reqwest", "rustls"] }
+sentry = { version = "0.49.0", default-features = false, features = ["backtrace", "contexts", "panic", "debug-images", "reqwest", "rustls"] }
 crossbeam-channel = "0.5.16"
 parking_lot = "0.12"
 uuid = "1.24.0"
