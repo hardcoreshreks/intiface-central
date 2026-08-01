@@ -10,11 +10,11 @@ PODS:
     - FlutterMacOS
   - screen_retriever_macos (0.0.1):
     - FlutterMacOS
-  - Sentry/HybridSDK (8.58.3)
-  - sentry_flutter (9.21.0):
+  - Sentry/HybridSDK (8.58.4)
+  - sentry_flutter (9.26.0):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 8.58.3)
+    - Sentry/HybridSDK (= 8.58.4)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -72,11 +72,11 @@ SPEC CHECKSUMS:
   network_info_plus: 21d1cd6a015ccb2fdff06a1fbfa88d54b4e92f61
   package_info_plus: f0052d280d17aa382b932f399edf32507174e870
   rust_lib_intiface_central: 022999145d0fd06423075656b771a72399774216
-  screen_retriever_macos: 452e51764a9e1cdb74b3c541238795849f21557f
-  Sentry: 108fdbb76299c4189af12246bf0308c09c278922
-  sentry_flutter: 32e67cb4756ce3de42bbd56581fa935922ff328f
+  screen_retriever_macos: c5508cc3c66ff0d4db650480cf0ab691e220d933
+  Sentry: 5321d74bdd28d6f6f8beaa1ca06f1fdc746bff49
+  sentry_flutter: 01a996130a18996b59600c51e68b0e6364cde8b3
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
-  tray_manager: a104b5c81b578d83f3c3d0f40a997c8b10810166
+  tray_manager: 19c369010e59c073f13b82354d78a35f7972d609
   url_launcher_macos: f87a979182d112f911de6820aefddaf56ee9fbfd
   window_manager: b729e31d38fb04905235df9ea896128991cad99e
 

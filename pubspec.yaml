@@ -14,7 +14,7 @@ dependencies:
   bloc_concurrency: ^0.3.0
   buttplug: ^1.0.0
   cupertino_icons: ^1.0.8
-  device_info_plus: ^12.3.0
+  device_info_plus: ^13.2.0
   easy_debounce: ^2.0.3
   equatable: ^2.0.7
   # Needed for rust ffigen
@@ -32,7 +32,7 @@ dependencies:
   json_annotation: ^4.9.0
   loggy: ^2.0.3
   markdown: ^7.3.0
-  network_info_plus: ^7.0.0
+  network_info_plus: ^8.2.1
   path_provider: ^2.1.5
   path: ^1.9.1
   percent_indicator: ^4.2.5
@@ -60,7 +60,7 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.10.4
   # Needed for rust ffigen
-  ffigen: ^20.1.1
+  ffigen: ^21.0.0
   flutter_launcher_icons: ^0.14.4
   flutter_lints: ^6.0.0
   flutter_test:
