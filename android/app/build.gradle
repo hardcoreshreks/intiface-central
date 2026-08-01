@@ -109,10 +109,8 @@ androidComponents {
         def cargoBuild = tasks.register("cargoBuild${buildType.capitalize()}", CargoNdkBuildTask) {
             outputDirectory.set(layout.buildDirectory.dir("rustJniLibs/$buildType"))
 
-            // Add these targets if you want to run this in the simulator:
-            //  -t x86_64 -t x86 \
             def ndkCommand = """cargo ndk \
-                -t armeabi-v7a -t arm64-v8a \
+                -t armeabi-v7a -t arm64-v8a -t x86_64 \
                 -o ${outputDirectory.get().asFile.absolutePath} build $profileMode"""
 
             workingDir "../../rust"

@@ -1016,7 +1016,7 @@ jobs:
           test -s android/app/upload-keystore.jks
 
       - name: Add Android Rust targets
-        run: rustup target add armv7-linux-androideabi aarch64-linux-android
+        run: rustup target add armv7-linux-androideabi aarch64-linux-android x86_64-linux-android
 
       - name: Build Android artifacts
         env:
@@ -1027,14 +1027,14 @@ jobs:
 
           flutter pub get
           flutter build apk --release \
-            --target-platform android-arm,android-arm64 \
+            --target-platform android-arm,android-arm64,android-x64 \
             --build-name "$BUILD_NAME" \
             --build-number "$BUILD_NUMBER" \
             --dart-define "SENTRY_DSN=$SENTRY_DSN" \
             --dart-define "DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID:-}"
 
           flutter build appbundle --release \
-            --target-platform android-arm,android-arm64 \
+            --target-platform android-arm,android-arm64,android-x64 \
             --build-name "$BUILD_NAME" \
             --build-number "$BUILD_NUMBER" \
             --dart-define "SENTRY_DSN=$SENTRY_DSN" \
