@@ -93,7 +93,11 @@ Tests are currently disabled in pubspec.yaml. To enable:
 
 ## Platform Notes
 
-- **Android:** minSdkVersion 27, NDK 28.2.13676358, uses foreground service for background operation
+- **Android:** minSdkVersion 27, compileSdk 37, NDK 28.2.13676358, uses foreground service for background operation
+  - AGP 9.1.1 / Gradle 9.3.1. AGP 9.1.1 is the minimum for compileSdk 37 and the highest AGP Flutter 3.44 supports, so these move together with the Flutter version.
+  - `android.builtInKotlin=false` and `android.newDsl=false` in `gradle.properties` opt out of AGP 9 behaviour changes. AGP 10 removes the opt-out, so the app and any plugins applying KGP directly (currently `flutter_foreground_task` and `sentry_flutter`) must migrate to Built-in Kotlin before then.
+  - `rust_builder/android/build.gradle` has its own `compileSdk` that must stay >= the app's, or AGP fails the AndroidX dependency check.
+  - Do not add `<uses-sdk>` to `AndroidManifest.xml`; AGP 9 rejects it. SDK levels belong in `build.gradle`.
 - **Windows:** MSIX packaging configured for Windows Store capabilities (bluetooth, USB, serial, HID)
 - **Desktop:** Window management via `window_manager` package
 
