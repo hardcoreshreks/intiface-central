@@ -10,6 +10,7 @@
 - Fix engine shutdown hanging or reporting the wrong result when running in the foreground service
 - Fix nondeterministic shutdown of the embedded engine runtime
 - Fix macOS builds missing CocoaPods plugin integration
+- Fix Android APK builds shipping without the Rust native library, crashing on startup when sideloaded
 
 # v3.1.0 - 2026/06/01 (All Platforms)
 

@@ -49,8 +49,7 @@ android {
     }
 }
 
-apply from: "../cargokit/gradle/plugin.gradle"
-cargokit {
-    manifestDir = "../../rust"
-    libname = "rust_lib_intiface_central"
-}
+// Cargokit is still used for the Apple and CMake desktop builds, but not here:
+// its Gradle plugin relies on project.buildDir and android.applicationVariants,
+// both removed in Gradle 9 / AGP 9. The Android native libraries are built by
+// the cargoBuild tasks in android/app/build.gradle instead.

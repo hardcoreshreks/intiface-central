@@ -96,34 +96,40 @@ dependencies {
     // coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.9")
 }
 
-[
-    new Tuple2('Debug', ''),
-    new Tuple2('Profile', '--release'),
-    new Tuple2('Release', '--release')
-].each {
-    def taskPostfix = it.first
-    def profileMode = it.second
-    tasks.whenTaskAdded { task ->
-        if (task.name == "javaPreCompile$taskPostfix") {
-            task.dependsOn "cargoBuild$taskPostfix"
-        }
-    }
-    tasks.register("cargoBuild$taskPostfix", Exec) {
-        // Until https://github.com/bbqsrc/cargo-ndk/pull/13 is merged,
-        // this workaround is necessary.
+abstract class CargoNdkBuildTask extends Exec {
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDirectory()
+}
 
-        // Add this line if you want to run this in the simulator
-        //  -t x86_64 -t x86 \
-        def ndk_command = """cargo ndk \
-            -t armeabi-v7a -t arm64-v8a \
-            -o ../android/app/src/main/jniLibs build $profileMode"""
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        def buildType = variant.buildType
+        def profileMode = buildType == 'debug' ? '' : '--release'
 
-        workingDir "../../rust"
-        // environment "ANDROID_NDK_HOME", "$ANDROID_NDK"
-        if (org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-            commandLine 'cmd', '/C', ndk_command
-        } else {
-            commandLine 'sh', '-c', ndk_command
+        def cargoBuild = tasks.register("cargoBuild${buildType.capitalize()}", CargoNdkBuildTask) {
+            outputDirectory.set(layout.buildDirectory.dir("rustJniLibs/$buildType"))
+
+            // Add these targets if you want to run this in the simulator:
+            //  -t x86_64 -t x86 \
+            def ndkCommand = """cargo ndk \
+                -t armeabi-v7a -t arm64-v8a \
+                -o ${outputDirectory.get().asFile.absolutePath} build $profileMode"""
+
+            workingDir "../../rust"
+            if (org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+                commandLine 'cmd', '/C', ndkCommand
+            } else {
+                commandLine 'sh', '-c', ndkCommand
+            }
+
+            // Cargo does its own change detection, and Gradle cannot see the
+            // crate's sources from here, so never let it skip the invocation.
+            outputs.upToDateWhen { false }
         }
+
+        // Registering as a generated source directory is what makes AGP wait for
+        // cargo before merging native libs. Copying into the source tree instead
+        // races the merge task and silently ships an APK with no Rust library.
+        variant.sources.jniLibs.addGeneratedSourceDirectory(cargoBuild) { it.outputDirectory }
     }
 }

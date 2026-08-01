@@ -98,6 +98,7 @@ Tests are currently disabled in pubspec.yaml. To enable:
   - `android.builtInKotlin=false` and `android.newDsl=false` in `gradle.properties` opt out of AGP 9 behaviour changes. AGP 10 removes the opt-out, so the app and any plugins applying KGP directly (currently `flutter_foreground_task` and `sentry_flutter`) must migrate to Built-in Kotlin before then.
   - `rust_builder/android/build.gradle` has its own `compileSdk` that must stay >= the app's, or AGP fails the AndroidX dependency check.
   - Do not add `<uses-sdk>` to `AndroidManifest.xml`; AGP 9 rejects it. SDK levels belong in `build.gradle`.
+  - Rust native libraries are built by the `cargoBuild*` tasks in `android/app/build.gradle` and attached with `variant.sources.jniLibs.addGeneratedSourceDirectory`. That registration is what orders cargo before `merge*NativeLibs` — copying into `src/main/jniLibs` instead races the merge and silently ships an APK with no Rust library (see issue #262). Cargokit is not used on Android; its Gradle plugin depends on `project.buildDir` and `android.applicationVariants`, both removed in Gradle 9 / AGP 9.
 - **Windows:** MSIX packaging configured for Windows Store capabilities (bluetooth, USB, serial, HID)
 - **Desktop:** Window management via `window_manager` package
 
