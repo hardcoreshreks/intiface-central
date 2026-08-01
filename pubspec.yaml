@@ -36,7 +36,7 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.1
   percent_indicator: ^4.2.5
-  permission_handler: ^12.0.1
+  permission_handler: ^13.0.0
   plugin_platform_interface: ^2.1.8
   rxdart: ^0.28.0
   screen_retriever: ^0.2.0
