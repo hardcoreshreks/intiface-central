@@ -64,9 +64,9 @@ impl From<UserDeviceIdentifier> for ExposedUserDeviceIdentifier {
   }
 }
 
-impl Into<UserDeviceIdentifier> for ExposedUserDeviceIdentifier {
-  fn into(self) -> UserDeviceIdentifier {
-    self.identifier
+impl From<ExposedUserDeviceIdentifier> for UserDeviceIdentifier {
+  fn from(value: ExposedUserDeviceIdentifier) -> Self {
+    value.identifier
   }
 }
 
@@ -87,9 +87,9 @@ impl From<ServerDeviceDefinition> for ExposedServerDeviceDefinition {
   }
 }
 
-impl Into<ServerDeviceDefinition> for ExposedServerDeviceDefinition {
-  fn into(self) -> ServerDeviceDefinition {
-    self.definition
+impl From<ExposedServerDeviceDefinition> for ServerDeviceDefinition {
+  fn from(value: ExposedServerDeviceDefinition) -> Self {
+    value.definition
   }
 }
 
@@ -568,8 +568,8 @@ impl ExposedRangeWithLimit {
 impl From<&RangeWithLimit> for ExposedRangeWithLimit {
   fn from(value: &RangeWithLimit) -> Self {
     Self {
-      base: value.base.clone(),
-      user: value.user.clone(),
+      base: value.base,
+      user: value.user,
     }
   }
 }
@@ -774,14 +774,14 @@ mod tests {
     let parsed: serde_json::Value = serde_json::from_str(&config_json).unwrap();
     let devices = parsed["user_configs"]["devices"]
       .as_array()
-      .expect(&format!(
-        "Expected devices array in config JSON:\n{config_json}"
-      ));
+      .unwrap_or_else(|| panic!("Expected devices array in config JSON:\n{config_json}"));
     let device = &devices[0];
-    let features = device["config"]["features"].as_array().expect(&format!(
-      "Expected features array in device.config:\n{}",
-      serde_json::to_string_pretty(device).unwrap()
-    ));
+    let features = device["config"]["features"].as_array().unwrap_or_else(|| {
+      panic!(
+        "Expected features array in device.config:\n{}",
+        serde_json::to_string_pretty(device).unwrap()
+      )
+    });
     let feature = &features[0];
     let output = &feature["output"];
 

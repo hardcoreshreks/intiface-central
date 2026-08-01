@@ -7,13 +7,13 @@ use crate::{
 use anyhow::{Result, anyhow};
 use flutter_rust_bridge::frb;
 use futures::{StreamExt, pin_mut};
-use lazy_static::lazy_static;
 use log::*;
 use parking_lot::{Condvar, Mutex};
 use std::{
   fmt,
   sync::{
     Arc,
+    LazyLock,
     atomic::{AtomicBool, Ordering},
   },
   thread,
@@ -183,6 +183,7 @@ impl LifecycleCoordinator {
       .expect("runtime disposer thread must be available");
   }
 
+  #[cfg(test)]
   fn start<F, Fut, C>(&self, runtime: Runtime, runner: F, close: C) -> Result<u64>
   where
     F: FnOnce(Arc<StopSignal>) -> Fut + Send + 'static,
@@ -417,15 +418,13 @@ impl LifecycleCoordinator {
   }
 }
 
-lazy_static! {
-  static ref LIFECYCLE: LifecycleCoordinator = LifecycleCoordinator::new();
-  static ref ENGINE_BROADCASTER: Arc<broadcast::Sender<IntifaceMessage>> =
-    Arc::new(broadcast::channel(255).0);
-  static ref BACKDOOR_INCOMING_BROADCASTER: Arc<broadcast::Sender<String>> =
-    Arc::new(broadcast::channel(255).0);
-  /// Prevents backdoor sends after the engine has emitted its final messages.
-  static ref ENGINE_SHUTDOWN: AtomicBool = AtomicBool::new(false);
-}
+static LIFECYCLE: LazyLock<LifecycleCoordinator> = LazyLock::new(LifecycleCoordinator::new);
+static ENGINE_BROADCASTER: LazyLock<Arc<broadcast::Sender<IntifaceMessage>>> =
+  LazyLock::new(|| Arc::new(broadcast::channel(255).0));
+static BACKDOOR_INCOMING_BROADCASTER: LazyLock<Arc<broadcast::Sender<String>>> =
+  LazyLock::new(|| Arc::new(broadcast::channel(255).0));
+/// Prevents backdoor sends after the engine has emitted its final messages.
+static ENGINE_SHUTDOWN: AtomicBool = AtomicBool::new(false);
 
 #[frb(mirror(EngineOptionsExternal))]
 pub struct _EngineOptionsExternal {

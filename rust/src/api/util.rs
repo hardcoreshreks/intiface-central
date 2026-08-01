@@ -20,7 +20,7 @@ pub fn setup_logging(sink: StreamSink<String>) {
   unsafe {
     std::env::set_var(
       "RUST_LOG",
-      format!("debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn"),
+      "debug,h2=warn,reqwest=warn,rustls=warn,hyper=warn",
     );
   }
   // Shut down the old writer first, so its Drop doesn't clear the new sender

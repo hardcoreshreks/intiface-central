@@ -20,22 +20,22 @@ impl From<SerialSpecifier> for ExposedSerialSpecifier {
   fn from(value: SerialSpecifier) -> Self {
     Self {
       port: value.port().clone(),
-      parity: value.parity().clone().into(),
-      baud_rate: value.baud_rate().clone(),
-      data_bits: value.data_bits().clone(),
-      stop_bits: value.stop_bits().clone(),
+      parity: (*value.parity()).into(),
+      baud_rate: *value.baud_rate(),
+      data_bits: *value.data_bits(),
+      stop_bits: *value.stop_bits(),
     }
   }
 }
 
-impl Into<SerialSpecifier> for ExposedSerialSpecifier {
-  fn into(self) -> SerialSpecifier {
+impl From<ExposedSerialSpecifier> for SerialSpecifier {
+  fn from(value: ExposedSerialSpecifier) -> Self {
     SerialSpecifier::new(
-      &self.port,
-      self.baud_rate,
-      self.data_bits,
-      self.stop_bits,
-      self.parity.chars().next().unwrap(),
+      &value.port,
+      value.baud_rate,
+      value.data_bits,
+      value.stop_bits,
+      value.parity.chars().next().unwrap(),
     )
   }
 }
@@ -53,9 +53,9 @@ impl From<WebsocketSpecifier> for ExposedWebsocketSpecifier {
   }
 }
 
-impl Into<WebsocketSpecifier> for ExposedWebsocketSpecifier {
-  fn into(self) -> WebsocketSpecifier {
-    WebsocketSpecifier::new(&self.name)
+impl From<ExposedWebsocketSpecifier> for WebsocketSpecifier {
+  fn from(value: ExposedWebsocketSpecifier) -> Self {
+    WebsocketSpecifier::new(&value.name)
   }
 }
 
@@ -149,9 +149,5 @@ pub fn remove_serial_specifier(protocol: String, port: String) {
 }
 
 pub fn get_protocol_names() -> Vec<String> {
-  get_default_protocol_map()
-    .keys()
-    .into_iter()
-    .cloned()
-    .collect()
+  get_default_protocol_map().keys().cloned().collect()
 }
