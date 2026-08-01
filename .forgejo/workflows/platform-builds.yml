@@ -1040,6 +1040,9 @@ jobs:
             --dart-define "SENTRY_DSN=$SENTRY_DSN" \
             --dart-define "DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID:-}"
 
+      - name: Verify Android native libraries
+        run: ./scripts/verify-android-native-libs.sh
+
       - name: Upload Android symbols to Sentry
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
