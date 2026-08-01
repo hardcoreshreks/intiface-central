@@ -1,3 +1,16 @@
+# v3.1.1 - 2026/08/01 (All Platforms)
+
+## Features
+
+- Update to Buttplug v11.0.0/Intiface Engine v4.1.0/Device Config v11.0.0
+
+## Bugfixes
+
+- Fix device outputs settling on a stale value, caused by output commands being debounced
+- Fix engine shutdown hanging or reporting the wrong result when running in the foreground service
+- Fix nondeterministic shutdown of the embedded engine runtime
+- Fix macOS builds missing CocoaPods plugin integration
+
 # v3.1.0 - 2026/06/01 (All Platforms)
 
 ## Features
