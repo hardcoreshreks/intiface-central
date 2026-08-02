@@ -66,21 +66,46 @@ class IntifaceStreamPrinter extends LoggyPrinter {
 
 // From https://github.com/infinum/floggy/issues/50
 class FileOutput extends LoggyPrinter {
+  static const int maxFileSizeBytes = 10 * 1024 * 1024;
+
   static final DateTime _appStartTime = DateTime.now();
 
   FileOutput() : super() {
-    _sink = IntifacePaths.logFile.openWrite(
-      mode: FileMode.writeOnly,
-      encoding: utf8,
-    );
+    _sink = _openSink();
   }
+
   IOSink? _sink;
+  int _bytesWritten = 0;
+  bool _truncating = false;
+
+  static IOSink _openSink() =>
+      IntifacePaths.logFile.openWrite(mode: FileMode.writeOnly, encoding: utf8);
 
   @override
-  void onLog(LogRecord record) async {
+  void onLog(LogRecord record) {
     var logString =
         "${DateTime.now().difference(_appStartTime).inMilliseconds / 1000.0} : [${record.level.toString().substring(0, 1)}] : ${record.message}";
+    var lineBytes = utf8.encode(logString).length + 1;
+
+    if (!_truncating && _bytesWritten + lineBytes > maxFileSizeBytes) {
+      _truncate();
+    }
+
     _sink?.writeln(logString);
+    _bytesWritten += lineBytes;
+  }
+
+  // The old sink has to finish closing before the replacement opens, otherwise
+  // its buffered tail flushes at the pre-truncation offset and reinflates the
+  // file. Records logged during that window are dropped rather than queued.
+  Future<void> _truncate() async {
+    _truncating = true;
+    var oldSink = _sink;
+    _sink = null;
+    await oldSink?.close();
+    _sink = _openSink();
+    _bytesWritten = 0;
+    _truncating = false;
   }
 }
 
