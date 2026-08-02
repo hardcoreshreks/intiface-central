@@ -12,6 +12,7 @@
 - Fix macOS builds missing CocoaPods plugin integration
 - Fix Android APK builds shipping without the Rust native library, crashing on startup when sideloaded
 - Fix Android crashing instantly on ChromeOS and x86_64 devices, which advertised x86_64 support without shipping the libraries for it
+- Fix serial devices failing to open on macOS with "Operation not permitted", including TCode devices and Lovense serial dongles
 
 # v3.1.0 - 2026/06/01 (All Platforms)
 
