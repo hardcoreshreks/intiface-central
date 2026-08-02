@@ -5,7 +5,7 @@
 
 #define Version GetEnv('BUILD_VERSION')
 #if Version == ""
-#define Version "x.x.x.x"
+#error BUILD_VERSION is not set. Set it to the pubspec.yaml version before running ISCC.
 #endif
 
 [Setup]

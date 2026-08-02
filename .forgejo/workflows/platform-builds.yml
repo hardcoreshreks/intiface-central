@@ -247,17 +247,6 @@ jobs:
 
           Write-Host "Inno Setup compiler: $isccPath"
 
-      - name: Derive build version
-        run: |
-          $versionLine = Select-String -Path pubspec.yaml -Pattern '^version:\s*(.+)$' | Select-Object -First 1
-          if (-not $versionLine) {
-            throw "Could not find version in pubspec.yaml"
-          }
-
-          $pubspecVersion = $versionLine.Matches[0].Groups[1].Value.Trim()
-          $buildName = ($pubspecVersion -split '\+')[0]
-          "BUILD_VERSION=$buildName" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-
       - name: Rust check
         run: cargo check --manifest-path rust/Cargo.toml --release --message-format short
 
@@ -349,6 +338,14 @@ jobs:
           if (-not $isccPath) {
             throw "Inno Setup 6 is required. Install it or add ISCC.exe to PATH."
           }
+
+          $versionLine = Select-String -Path pubspec.yaml -Pattern '^version:\s*(.+)$' | Select-Object -First 1
+          if (-not $versionLine) {
+            throw "Could not find version in pubspec.yaml"
+          }
+
+          $env:BUILD_VERSION = (($versionLine.Matches[0].Groups[1].Value.Trim()) -split '\+')[0]
+          Write-Host "Installer version: $env:BUILD_VERSION"
 
           & $isccPath .\intiface-central-installer.iss
           exit $LASTEXITCODE
