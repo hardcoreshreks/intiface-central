@@ -1,4 +1,4 @@
-# v3.1.1 - 2026/08/01 (All Platforms)
+# v3.1.1 - 2026/08/02 (All Platforms)
 
 ## Features
 
@@ -13,6 +13,11 @@
 - Fix Android APK builds shipping without the Rust native library, crashing on startup when sideloaded
 - Fix Android crashing instantly on ChromeOS and x86_64 devices, which advertised x86_64 support without shipping the libraries for it
 - Fix serial devices failing to open on macOS with "Operation not permitted", including TCode devices and Lovense serial dongles
+- Fix a Bluetooth error flood being able to stall the engine and stop device commands from being sent
+- Fix engine start failures other than a port collision producing no error message or dialog
+- Fix the log display buffer growing without bound, consuming gigabytes over long sessions with chatty clients
+- Fix log files growing large enough to break Sentry attachment uploads, capping them at 10MB
+- Fix the Windows installer showing a placeholder version instead of the real one
 
 # v3.1.0 - 2026/06/01 (All Platforms)
 
