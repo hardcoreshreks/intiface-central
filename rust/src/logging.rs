@@ -19,6 +19,8 @@ use tracing_subscriber::{
 
 /// Log messages matching these patterns are filtered out (not sent to Flutter).
 /// These are benign errors from third-party libraries that would confuse users.
+/// Matched before the message is queued, so a filtered pattern never occupies a
+/// channel slot.
 const FILTERED_LOG_PATTERNS: &[&str] = &[
   // btleplug logs this during macOS Bluetooth permission flow - benign
   "Error dispatching event: SendError",
@@ -56,9 +58,13 @@ impl std::io::Write for BroadcastWriter {
   fn write(&mut self, buf: &[u8]) -> Result<usize, std::io::Error> {
     let len = buf.len();
     if let Ok(log_str) = std::str::from_utf8(buf)
+      && !should_filter_log(log_str)
       && let Some(sender) = LOG_SENDER.lock().as_ref()
     {
-      let _ = sender.send(log_str.to_owned());
+      // try_send, never send. This runs synchronously on whichever thread
+      // emitted the log, which includes the tokio workers driving BLE. A
+      // blocking send lets a log flood stall the engine, so drop lines instead.
+      let _ = sender.try_send(log_str.to_owned());
     }
     Ok(len)
   }
@@ -135,7 +141,6 @@ impl FlutterTracingWriter {
           // Exhaust all waiting messages, but only if engine is not shutting down.
           while let Ok(msg) = receiver.try_recv() {
             if !is_engine_shutdown()
-              && !should_filter_log(&msg)
               && std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                 let _ = sink.add(msg);
               }))
@@ -146,13 +151,11 @@ impl FlutterTracingWriter {
           }
           break;
         }
-        // Wait on the receiver, as while getting 255 messages in the time between our quit calls is
-        // unlikely, backpressure locks are worse than waiting 10ms.
-        // Check shutdown flag before sending to avoid SendError.
-        // Also filter out benign third-party library errors.
+        // Check shutdown flag before sending to avoid SendError. Producers use
+        // try_send, so a slow drain here costs log lines rather than blocking
+        // the threads doing the logging.
         if let Ok(msg) = receiver.recv_timeout(Duration::from_millis(10))
           && !is_engine_shutdown()
-          && !should_filter_log(&msg)
           && std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             let _ = sink.add(msg);
           }))
