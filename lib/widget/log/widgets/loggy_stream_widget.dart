@@ -47,16 +47,19 @@ class LoggyStreamWidget extends StatelessWidget {
                     return Container();
                   }
 
+                  final List<LogRecord> visibleRecords = records.data!
+                      .where(
+                        (LogRecord record) =>
+                            record.level.priority >= logLevel!.priority,
+                      )
+                      .toList(growable: false);
+
                   return SelectionArea(
-                    child: ListView(
+                    child: ListView.builder(
                       reverse: true,
-                      children: records.data!
-                          .where(
-                            (LogRecord record) =>
-                                record.level.priority >= logLevel!.priority,
-                          )
-                          .map((LogRecord record) => _LoggyItemWidget(record))
-                          .toList(),
+                      itemCount: visibleRecords.length,
+                      itemBuilder: (BuildContext context, int index) =>
+                          _LoggyItemWidget(visibleRecords[index]),
                     ),
                   );
                 },

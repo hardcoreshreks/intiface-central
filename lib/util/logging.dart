@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -21,23 +22,21 @@ class RecordMetadata {
 ///
 /// This allows [LoggyStreamWidget] to display logs as well.
 class IntifaceStreamPrinter extends LoggyPrinter {
+  static const int maxRetainedRecords = 1000;
+
   static final DateTime _appStartTime = DateTime.now();
 
   IntifaceStreamPrinter(this.childPrinter) : super();
 
   final LoggyPrinter childPrinter;
+  final ListQueue<LogRecord> _records = ListQueue<LogRecord>(
+    maxRetainedRecords,
+  );
   final BehaviorSubject<List<LogRecord>> logRecord =
       BehaviorSubject<List<LogRecord>>.seeded(<LogRecord>[]);
 
   @override
   void onLog(LogRecord record) {
-    late List<LogRecord> existingRecord;
-    try {
-      existingRecord = logRecord.value;
-    } on ValueStreamError {
-      existingRecord = <LogRecord>[];
-    }
-
     LogRecord newRecord = LogRecord(
       record.level,
       record.message,
@@ -52,7 +51,12 @@ class IntifaceStreamPrinter extends LoggyPrinter {
     );
 
     childPrinter.onLog(newRecord);
-    logRecord.add(<LogRecord>[newRecord, ...existingRecord]);
+
+    _records.addFirst(newRecord);
+    while (_records.length > maxRetainedRecords) {
+      _records.removeLast();
+    }
+    logRecord.add(List<LogRecord>.unmodifiable(_records));
   }
 
   void dispose() {
