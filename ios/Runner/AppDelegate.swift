@@ -12,8 +12,6 @@ import UserNotifications
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    let dummy = dummy_method_to_enforce_bundling()
-    print(dummy)
     GeneratedPluginRegistrant.register(with: self)
     // here, Without this code the task will not work.
     SwiftFlutterForegroundTaskPlugin.setPluginRegistrantCallback(registerPlugins)
