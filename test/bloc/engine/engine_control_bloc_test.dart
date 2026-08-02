@@ -239,6 +239,60 @@ void main() {
     );
 
     blocTest<EngineControlBloc, EngineControlState>(
+      'emits EngineErrorState on engine error without a detail code',
+      build: buildBloc,
+      act: (bloc) async {
+        bloc.add(EngineControlEventStart(options: FakeEngineOptionsExternal()));
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        final msg = EngineMessage()
+          ..engineError = (EngineError()..error = 'Engine exploded');
+        streamController.add(EngineOutput(msg, null));
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        await streamController.close();
+        await Future.delayed(const Duration(milliseconds: 50));
+      },
+      expect: () => [
+        isA<EngineStartingState>(),
+        isA<EngineErrorState>().having(
+          (s) => s.error,
+          'error',
+          'Engine exploded',
+        ),
+        isA<EngineStoppedState>(),
+      ],
+    );
+
+    blocTest<EngineControlBloc, EngineControlState>(
+      'emits EngineErrorState on engine error with an unrecognized detail code',
+      build: buildBloc,
+      act: (bloc) async {
+        bloc.add(EngineControlEventStart(options: FakeEngineOptionsExternal()));
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        final msg = EngineMessage()
+          ..engineError = (EngineError()
+            ..error = 'Something else went wrong'
+            ..detail = (EngineErrorDetail()..code = 'generic_engine_error'));
+        streamController.add(EngineOutput(msg, null));
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        await streamController.close();
+        await Future.delayed(const Duration(milliseconds: 50));
+      },
+      expect: () => [
+        isA<EngineStartingState>(),
+        isA<EngineErrorState>().having(
+          (s) => s.error,
+          'error',
+          'Something else went wrong',
+        ),
+        isA<EngineStoppedState>(),
+      ],
+    );
+
+    blocTest<EngineControlBloc, EngineControlState>(
       'stop when already stopped is a no-op',
       build: buildBloc,
       act: (bloc) async {

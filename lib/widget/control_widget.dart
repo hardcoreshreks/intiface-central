@@ -11,29 +11,24 @@ import 'package:intiface_central/util/intiface_util.dart';
 import 'package:loggy/loggy.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-const _portInUseTroubleshootingUrl =
+const _troubleshootingUrl =
     'https://intiface.com/docs/intiface-central/troubleshooting';
 
-Future<void> _showPortInUseDialog(
-  BuildContext context,
-  EnginePortInUseState state,
-) async {
+Future<void> _showEngineErrorDialog(
+  BuildContext context, {
+  required String title,
+  required String content,
+}) async {
   await showDialog<void>(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      title: const Text('Port in use'),
-      content: Text(
-        [
-          'Engine error: ${state.error}',
-          if (state.address != null) 'Address: ${state.address}',
-          if (state.port != null) 'Port: ${state.port}',
-        ].join('\n'),
-      ),
+      title: Text(title),
+      content: Text(content),
       actions: [
         TextButton(
           onPressed: () async {
-            if (await canLaunchUrlString(_portInUseTroubleshootingUrl)) {
-              await launchUrlString(_portInUseTroubleshootingUrl);
+            if (await canLaunchUrlString(_troubleshootingUrl)) {
+              await launchUrlString(_troubleshootingUrl);
             }
           },
           child: const Text('Open Troubleshooting'),
@@ -56,9 +51,26 @@ class ControlWidget extends StatelessWidget {
       buildWhen: (previous, current) => current is AppModeState,
       builder: (context, configState) {
         return BlocConsumer<EngineControlBloc, EngineControlState>(
-          listenWhen: (previous, current) => current is EnginePortInUseState,
+          listenWhen: (previous, current) =>
+              current is EnginePortInUseState || current is EngineErrorState,
           listener: (context, state) {
-            _showPortInUseDialog(context, state as EnginePortInUseState);
+            if (state is EnginePortInUseState) {
+              _showEngineErrorDialog(
+                context,
+                title: 'Port in use',
+                content: [
+                  'Engine error: ${state.error}',
+                  if (state.address != null) 'Address: ${state.address}',
+                  if (state.port != null) 'Port: ${state.port}',
+                ].join('\n'),
+              );
+            } else if (state is EngineErrorState) {
+              _showEngineErrorDialog(
+                context,
+                title: 'Engine error',
+                content: state.error,
+              );
+            }
           },
           buildWhen:
               (EngineControlState previous, EngineControlState current) =>

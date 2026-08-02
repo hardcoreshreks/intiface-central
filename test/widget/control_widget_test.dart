@@ -156,5 +156,38 @@ void main() {
         findsOneWidget,
       );
     });
+
+    testWidgets('shows generic error dialog on non-port engine error', (
+      tester,
+    ) async {
+      final engineBloc = MockEngineControlBloc();
+      when(() => engineBloc.state).thenReturn(EngineStartedState());
+      when(() => engineBloc.isRunning).thenReturn(true);
+      whenListen(
+        engineBloc,
+        Stream<EngineControlState>.fromIterable([
+          EngineErrorState('Engine exploded'),
+        ]),
+        initialState: EngineStartedState(),
+      );
+
+      await pumpApp(
+        tester,
+        child: const ControlWidget(),
+        engineControlBloc: engineBloc,
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.text('Engine error'), findsOneWidget);
+      expect(find.text('Open Troubleshooting'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.textContaining('Engine exploded'),
+        ),
+        findsOneWidget,
+      );
+    });
   });
 }

@@ -72,6 +72,12 @@ class EnginePortInUseState extends EngineControlState {
   EnginePortInUseState(this.error, {this.port, this.address});
 }
 
+class EngineErrorState extends EngineControlState {
+  final String error;
+
+  EngineErrorState(this.error);
+}
+
 class EngineControlEvent {}
 
 class EngineControlEventStart extends EngineControlEvent {
@@ -165,6 +171,7 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
             if (engineMessage.engineError != null) {
               var engineError = engineMessage.engineError!;
               var detail = engineError.detail;
+              logError("Engine error: ${engineError.error}");
               if (detail?.code == "port_in_use") {
                 return EnginePortInUseState(
                   engineError.error,
@@ -172,6 +179,7 @@ class EngineControlBloc extends Bloc<EngineControlEvent, EngineControlState> {
                   address: detail?.address,
                 );
               }
+              return EngineErrorState(engineError.error);
             }
             if (engineMessage.messageVersion != null) {
               logDebug("Got message version return");
