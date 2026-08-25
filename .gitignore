@@ -152,3 +152,11 @@ target
 docs/assets/screenshots/generated
 # Local dev scratch
 /reset_lovense_deprecation.sh
+
+# devrag MCP server working files. The server writes these into whatever
+# directory it is launched from; paths are anchored to the repo root so a
+# future lib/models/ or similar is not swallowed by accident.
+/config.json
+/vectors.db
+/models/
+/documents/
